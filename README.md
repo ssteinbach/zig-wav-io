@@ -1,7 +1,8 @@
 # zig-wav-io Library
 
-Simple wav decoding + encoding in Zig.  Originally a fork of the
-[veloscillator/zig-wav](https://github.com/veloscillator/zig-wav) library.
+Simple wav decoding + encoding in Zig.  Originally a fork (including test wav
+files) of the [veloscillator/zig-wav](https://github.com/veloscillator/zig-wav)
+library.
 
 ## Features
 
