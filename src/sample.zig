@@ -5,7 +5,8 @@ const bad_type = (
     "sample type must be u8, i16, i24, i32, or f32, not: "
 );
 
-/// Converts between PCM and float sample types.
+/// Converts between integer/PCM and float sample formats.  Only allows source
+/// types that are also supported integer/floating point types.
 pub fn convert(
     /// type to convert value to
     comptime TargetType: type,
@@ -34,12 +35,16 @@ pub fn convert(
 
     return switch (SourceType) {
         i8, i16, i24, i32 => switch (TargetType) {
-            i8, i16, i24, i32 => convertSignedInt(TargetType, value),
-            f32 => convertIntToFloat(TargetType, value),
-            else => @compileError(bad_type),
+            i8, i16, i24, i32 => (
+                convert_signed_int(TargetType, value)
+            ),
+            f32 => convert_int_to_float(TargetType, value),
+            else => @compileError(bad_type ++ @typeName(SourceType)),
         },
         f32 => switch (TargetType) {
-            i8, i16, i24, i32 => convertFloatToInt(TargetType, value),
+            i8, i16, i24, i32 => (
+                convert_float_to_int(TargetType, value)
+            ),
             f32 => value,
             else => @compileError(bad_type),
         },
@@ -48,7 +53,7 @@ pub fn convert(
 }
 
 /// internal: convert a float to an int
-fn convertFloatToInt(
+fn convert_float_to_int(
     /// target type to convert to
     comptime TargetType: type,
     /// floating point value to convert
@@ -72,7 +77,7 @@ fn convertFloatToInt(
     );
 }
 
-fn convertIntToFloat(
+fn convert_int_to_float(
     comptime TargetType: type,
     value: anytype,
 ) TargetType 
@@ -87,7 +92,8 @@ fn convertIntToFloat(
     );
 }
 
-fn convertSignedInt(
+/// convert one int to another integer type
+fn convert_signed_int(
     comptime TargetType: type,
     value: anytype,
 ) TargetType 
@@ -122,7 +128,7 @@ fn expectApproxEqualInt(
     try std.testing.expect(abs <= tolerance);
 }
 
-fn testDownwardsConversions(
+fn test_downward_conversions(
     float32: f32,
     uint8: u8,
     int16: i16,
@@ -150,7 +156,7 @@ fn testDownwardsConversions(
     try std.testing.expectApproxEqAbs(float32, convert(f32, int24), tolerance * 2.0);
     try std.testing.expectApproxEqAbs(float32, convert(f32, int32), tolerance);
 
-    try expectApproxEqualInt(uint8, convert(u8, float32), 1);
+    try std.testing.expectApproxEqAbs(uint8, convert(u8, float32), 1);
     try expectApproxEqualInt(int16, convert(i16, float32), 2);
     try expectApproxEqualInt(int24, convert(i24, float32), 2);
     try expectApproxEqualInt(int32, convert(i32, float32), 200);
@@ -158,10 +164,10 @@ fn testDownwardsConversions(
 
 test "sanity test" 
 {
-    try testDownwardsConversions(0.0, 0x80, 0, 0, 0);
-    try testDownwardsConversions(0.0122069996, 0x81, 0x18F, 0x18FFF, 0x18FFFBB);
-    try testDownwardsConversions(0.00274699973, 0x80, 0x5A, 0x5A03, 0x5A0381);
-    try testDownwardsConversions(-0.441255282, 0x47, -14460, -3701517, -947588300);
+    try test_downward_conversions(0.0, 0x80, 0, 0, 0);
+    try test_downward_conversions(0.0122069996, 0x81, 0x18F, 0x18FFF, 0x18FFFBB);
+    try test_downward_conversions(0.00274699973, 0x80, 0x5A, 0x5A03, 0x5A0381);
+    try test_downward_conversions(-0.441255282, 0x47, -14460, -3701517, -947588300);
 
     var uint8: u8 = 0x81;
     try std.testing.expectEqual(@as(i16, 0x100), convert(i16, uint8));
