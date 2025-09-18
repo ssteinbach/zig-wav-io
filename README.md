@@ -1,7 +1,7 @@
 # zig-wav-io Library
 
 Simple wav decoding + encoding in Zig.  Originally a fork of the
-[Zig-wav](https://github.com/veloscillator/zig-wav) library.
+[veloscillator/zig-wav](https://github.com/veloscillator/zig-wav) library.
 
 ## Features
 
@@ -239,10 +239,12 @@ pub fn main(
 
 ## Demo
 
-Example program that creates a 3 second 440 pitch sine wave file.
+Example program that creates a 6 second wav file, 3 seconds of A 440 and 3
+seconds of middle C.
 
 ```
-zig build run -- example_out.wav
+zig build run
+ls -l sine.wav
 ```
 
 ## Future Work
