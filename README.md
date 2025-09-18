@@ -7,8 +7,6 @@ Simple wav decoding + encoding in Zig.  Originally a fork of the
 
 - Using the post-writergate Reader/Writer interface, decode/encode wav data.
 - Simple interface.
-- Convert samples to desired type while reading to avoid extra steps.
-- Fail gracefully on bad input.
 - Utilities for interleaving/deinterleaving samples and generating sine waves
 
 ## Usage
