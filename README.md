@@ -22,7 +22,7 @@ zig fetch --save "git+https://github.com/ssteinbach/zig-wav-io.git"
 Add to your `build.zig`:
 ```zig
     const wav_dep = b.dependency(
-        "wav_io",
+        "zig_wav_io",
         .{
             .target = options.target,
             .optimize = options.optimize,
